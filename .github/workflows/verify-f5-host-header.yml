@@ -1,0 +1,36 @@
+name: Independent Verification – F5 Host Header Redirects
+
+on:
+  workflow_dispatch:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Runner & network provenance
+        run: |
+          echo "Runner hostname:"; hostname
+          echo
+          echo "UTC time:"; date -u
+          echo
+          echo "Public IP:"; curl -s https://api.ipify.org || true
+
+      - name: Test 1 – Host = www2.sahealth.ha.sa.gov.au
+        run: |
+          echo
+          echo "===== TEST 1 ====="
+          curl -vk --max-redirs 0 \
+            -H "Host: www2.sahealth.ha.sa.gov.au" \
+            https://www2.sahealth.ha.sa.gov.au/virtualcareservice
+
+      - name: Divider
+        run: echo "============================================="
+
+      - name: Test 2 – Host = www.sahealth.sa.gov.au
+        run: |
+          echo
+          echo "===== TEST 2 ====="
+          curl -vk --max-redirs 0 \
+            -H "Host: www.sahealth.sa.gov.au" \
+            https://www2.sahealth.ha.sa.gov.au/virtualcareservice
